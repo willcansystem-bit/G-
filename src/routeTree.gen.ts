@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CanaisRouteImport } from './routes/canais'
+import { Route as CanalSlugRouteImport } from './routes/canal.$slug'
+import { Route as NoticiaSlugRouteImport } from './routes/noticia.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CanaisRoute = CanaisRouteImport.update({
+  id: '/canais',
+  path: '/canais',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanalSlugRoute = CanalSlugRouteImport.update({
+  id: '/canal/$slug',
+  path: '/canal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiaSlugRoute = NoticiaSlugRouteImport.update({
+  id: '/noticia/$slug',
+  path: '/noticia/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/canais': typeof CanaisRoute
+  '/canal/$slug': typeof CanalSlugRoute
+  '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/canais': typeof CanaisRoute
+  '/canal/$slug': typeof CanalSlugRoute
+  '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/canais': typeof CanaisRoute
+  '/canal/$slug': typeof CanalSlugRoute
+  '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
+  id: '__root__' | '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CanaisRoute: typeof CanaisRoute
+  CanalSlugRoute: typeof CanalSlugRoute
+  NoticiaSlugRoute: typeof NoticiaSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/canais': {
+      id: '/canais'
+      path: '/canais'
+      fullPath: '/canais'
+      preLoaderRoute: typeof CanaisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canal/$slug': {
+      id: '/canal/$slug'
+      path: '/canal/$slug'
+      fullPath: '/canal/$slug'
+      preLoaderRoute: typeof CanalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/noticia/$slug': {
+      id: '/noticia/$slug'
+      path: '/noticia/$slug'
+      fullPath: '/noticia/$slug'
+      preLoaderRoute: typeof NoticiaSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CanaisRoute: CanaisRoute,
+  CanalSlugRoute: CanalSlugRoute,
+  NoticiaSlugRoute: NoticiaSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
