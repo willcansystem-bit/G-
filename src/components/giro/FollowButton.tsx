@@ -1,17 +1,37 @@
 import { cn } from "@/lib/utils";
 import { useMyState } from "@/hooks/useAuth";
 import { useRequireAuth, useToggleFollow } from "@/hooks/useInteractions";
+import { useIsMutating } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 
-export function FollowButton({ channelId, small }: { channelId: string; small?: boolean }) {
-  const { data: me } = useMyState();
+export function FollowButton({
+  channelId,
+  small,
+  onlyUnfollowed,
+}: {
+  channelId: string;
+  small?: boolean;
+  onlyUnfollowed?: boolean;
+}) {
+  const { user } = useAuth();
+  const { data: me, isPending, isError } = useMyState();
   const requireAuth = useRequireAuth();
   const follow = useToggleFollow();
   const on = me?.follows.has(channelId) ?? false;
+  const pending = useIsMutating({
+    mutationKey: ["toggle", "follows"],
+    predicate: (mutation) =>
+      (mutation.state.variables as { id?: string } | undefined)?.id === channelId,
+  });
+  if (onlyUnfollowed && on) return null;
+  if (onlyUnfollowed && user && (isPending || isError)) return null;
   return (
     <button
       type="button"
       aria-pressed={on}
+      disabled={!!pending || (!!user && (isPending || isError))}
       onClick={() => {
+        if (!user) sessionStorage.setItem("giro:follow", channelId);
         if (!requireAuth()) return;
         follow.mutate({ id: channelId, on: !on });
       }}
@@ -23,7 +43,7 @@ export function FollowButton({ channelId, small }: { channelId: string; small?: 
           : "bg-foreground text-background hover:opacity-90",
       )}
     >
-      {on ? "Seguindo" : "Seguir"}
+      {on ? "Deixar de seguir" : "+ Seguir"}
     </button>
   );
 }

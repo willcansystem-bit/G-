@@ -4,7 +4,11 @@ import type { Channel } from "@/lib/api";
 
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
-    <Link to="/" aria-label="Giro+ — início" className="inline-flex items-baseline font-black tracking-tight">
+    <Link
+      to="/"
+      aria-label="Giro+ — início"
+      className="inline-flex items-baseline font-black tracking-tight"
+    >
       <span className="text-2xl text-foreground">{compact ? "G" : "Giro"}</span>
       <span className="text-2xl text-primary">+</span>
     </Link>
@@ -36,7 +40,12 @@ export function ChannelAvatar({
 }
 
 export function Verified() {
-  return <BadgeCheck className="h-4 w-4 fill-primary text-primary-foreground" aria-label="Canal oficial" />;
+  return (
+    <BadgeCheck
+      className="h-4 w-4 fill-primary text-primary-foreground"
+      aria-label="Canal oficial"
+    />
+  );
 }
 
 export function DemoBadge() {

@@ -1,6 +1,12 @@
-# Pixel Perfect Replica
+# Giro+
 
-Implement exactly the screenshot and nothing else
+Plataforma editorial com canais oficiais, timeline de notícias e participação dos leitores.
+
+## Desenvolvimento pelo Codex
+
+As alterações podem ser implementadas e validadas neste repositório, sem usar o editor Lovable.
+Consulte [implementação, banco e validação](docs/GIRO_IMPLEMENTACAO.md) para configurar o ambiente,
+aplicar a migração e executar os testes.
 
 This project was built with [Lovable](https://lovable.dev).
 

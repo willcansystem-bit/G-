@@ -10,8 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdministracaoRouteImport } from './routes/administracao'
 import { Route as CanaisRouteImport } from './routes/canais'
+import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as MetricasRouteImport } from './routes/metricas'
+import { Route as NotificacoesRouteImport } from './routes/notificacoes'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as SalvosRouteImport } from './routes/salvos'
 import { Route as CanalSlugRouteImport } from './routes/canal.$slug'
+import { Route as LeitorUsernameRouteImport } from './routes/leitor.$username'
 import { Route as NoticiaSlugRouteImport } from './routes/noticia.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -19,14 +28,59 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdministracaoRoute = AdministracaoRouteImport.update({
+  id: '/administracao',
+  path: '/administracao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CanaisRoute = CanaisRouteImport.update({
   id: '/canais',
   path: '/canais',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetricasRoute = MetricasRouteImport.update({
+  id: '/metricas',
+  path: '/metricas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificacoesRoute = NotificacoesRouteImport.update({
+  id: '/notificacoes',
+  path: '/notificacoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalvosRoute = SalvosRouteImport.update({
+  id: '/salvos',
+  path: '/salvos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CanalSlugRoute = CanalSlugRouteImport.update({
   id: '/canal/$slug',
   path: '/canal/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeitorUsernameRoute = LeitorUsernameRouteImport.update({
+  id: '/leitor/$username',
+  path: '/leitor/$username',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiaSlugRoute = NoticiaSlugRouteImport.update({
@@ -37,35 +91,111 @@ const NoticiaSlugRoute = NoticiaSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/canais': typeof CanaisRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contato': typeof ContatoRoute
+  '/entrar': typeof EntrarRoute
+  '/metricas': typeof MetricasRoute
+  '/notificacoes': typeof NotificacoesRoute
+  '/perfil': typeof PerfilRoute
+  '/salvos': typeof SalvosRoute
   '/canal/$slug': typeof CanalSlugRoute
+  '/leitor/$username': typeof LeitorUsernameRoute
   '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/canais': typeof CanaisRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contato': typeof ContatoRoute
+  '/entrar': typeof EntrarRoute
+  '/metricas': typeof MetricasRoute
+  '/notificacoes': typeof NotificacoesRoute
+  '/perfil': typeof PerfilRoute
+  '/salvos': typeof SalvosRoute
   '/canal/$slug': typeof CanalSlugRoute
+  '/leitor/$username': typeof LeitorUsernameRoute
   '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/administracao': typeof AdministracaoRoute
   '/canais': typeof CanaisRoute
+  '/configuracoes': typeof ConfiguracoesRoute
+  '/contato': typeof ContatoRoute
+  '/entrar': typeof EntrarRoute
+  '/metricas': typeof MetricasRoute
+  '/notificacoes': typeof NotificacoesRoute
+  '/perfil': typeof PerfilRoute
+  '/salvos': typeof SalvosRoute
   '/canal/$slug': typeof CanalSlugRoute
+  '/leitor/$username': typeof LeitorUsernameRoute
   '/noticia/$slug': typeof NoticiaSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
+  fullPaths:
+    | '/'
+    | '/administracao'
+    | '/canais'
+    | '/configuracoes'
+    | '/contato'
+    | '/entrar'
+    | '/metricas'
+    | '/notificacoes'
+    | '/perfil'
+    | '/salvos'
+    | '/canal/$slug'
+    | '/leitor/$username'
+    | '/noticia/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
-  id: '__root__' | '/' | '/canais' | '/canal/$slug' | '/noticia/$slug'
+  to:
+    | '/'
+    | '/administracao'
+    | '/canais'
+    | '/configuracoes'
+    | '/contato'
+    | '/entrar'
+    | '/metricas'
+    | '/notificacoes'
+    | '/perfil'
+    | '/salvos'
+    | '/canal/$slug'
+    | '/leitor/$username'
+    | '/noticia/$slug'
+  id:
+    | '__root__'
+    | '/'
+    | '/administracao'
+    | '/canais'
+    | '/configuracoes'
+    | '/contato'
+    | '/entrar'
+    | '/metricas'
+    | '/notificacoes'
+    | '/perfil'
+    | '/salvos'
+    | '/canal/$slug'
+    | '/leitor/$username'
+    | '/noticia/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdministracaoRoute: typeof AdministracaoRoute
   CanaisRoute: typeof CanaisRoute
+  ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ContatoRoute: typeof ContatoRoute
+  EntrarRoute: typeof EntrarRoute
+  MetricasRoute: typeof MetricasRoute
+  NotificacoesRoute: typeof NotificacoesRoute
+  PerfilRoute: typeof PerfilRoute
+  SalvosRoute: typeof SalvosRoute
   CanalSlugRoute: typeof CanalSlugRoute
+  LeitorUsernameRoute: typeof LeitorUsernameRoute
   NoticiaSlugRoute: typeof NoticiaSlugRoute
 }
 
@@ -78,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/administracao': {
+      id: '/administracao'
+      path: '/administracao'
+      fullPath: '/administracao'
+      preLoaderRoute: typeof AdministracaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/canais': {
       id: '/canais'
       path: '/canais'
@@ -85,11 +222,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CanaisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/configuracoes': {
+      id: '/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metricas': {
+      id: '/metricas'
+      path: '/metricas'
+      fullPath: '/metricas'
+      preLoaderRoute: typeof MetricasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notificacoes': {
+      id: '/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/notificacoes'
+      preLoaderRoute: typeof NotificacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/salvos': {
+      id: '/salvos'
+      path: '/salvos'
+      fullPath: '/salvos'
+      preLoaderRoute: typeof SalvosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/canal/$slug': {
       id: '/canal/$slug'
       path: '/canal/$slug'
       fullPath: '/canal/$slug'
       preLoaderRoute: typeof CanalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leitor/$username': {
+      id: '/leitor/$username'
+      path: '/leitor/$username'
+      fullPath: '/leitor/$username'
+      preLoaderRoute: typeof LeitorUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/noticia/$slug': {
@@ -104,8 +297,17 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdministracaoRoute: AdministracaoRoute,
   CanaisRoute: CanaisRoute,
+  ConfiguracoesRoute: ConfiguracoesRoute,
+  ContatoRoute: ContatoRoute,
+  EntrarRoute: EntrarRoute,
+  MetricasRoute: MetricasRoute,
+  NotificacoesRoute: NotificacoesRoute,
+  PerfilRoute: PerfilRoute,
+  SalvosRoute: SalvosRoute,
   CanalSlugRoute: CanalSlugRoute,
+  LeitorUsernameRoute: LeitorUsernameRoute,
   NoticiaSlugRoute: NoticiaSlugRoute,
 }
 export const routeTree = rootRouteImport

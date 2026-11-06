@@ -5,10 +5,45 @@ export type Channel = Database["public"]["Tables"]["channels"]["Row"];
 export type Post = Database["public"]["Tables"]["posts"]["Row"] & {
   channel: Pick<Channel, "id" | "slug" | "name" | "color"> | null;
 };
-export type FeedTab = "para-voce" | "seguindo" | "ultimas";
+export type PostCard = Pick<
+  Post,
+  | "id"
+  | "slug"
+  | "channel_id"
+  | "title"
+  | "summary"
+  | "image_key"
+  | "image_alt"
+  | "is_urgent"
+  | "is_demo"
+  | "published_at"
+  | "city"
+  | "state"
+  | "tags"
+  | "likes_count"
+  | "comments_count"
+  | "channel"
+>;
+export type FeedTab = "para-voce" | "ultimas";
 
 export const PAGE_SIZE = 8;
-const POST_SELECT = "*, channel:channels(id,slug,name,color)";
+export const GUEST_POST_LIMIT = 5;
+const POST_SELECT = "*, channel:channels!inner(id,slug,name,color,status)";
+
+export async function fetchGuestPosts(): Promise<PostCard[]> {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(
+      "id,slug,channel_id,title,summary,image_key,image_alt,is_urgent,is_demo,published_at,city,state,tags,likes_count,comments_count,channel:channels!inner(id,slug,name,color,status)",
+    )
+    .eq("status", "published")
+    .eq("channel.status", "active")
+    .order("published_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(GUEST_POST_LIMIT);
+  if (error) throw error;
+  return data as unknown as PostCard[];
+}
 
 export async function fetchChannels(): Promise<Channel[]> {
   const { data, error } = await supabase
@@ -21,7 +56,11 @@ export async function fetchChannels(): Promise<Channel[]> {
 }
 
 export async function fetchChannel(slug: string): Promise<Channel | null> {
-  const { data, error } = await supabase.from("channels").select("*").eq("slug", slug).maybeSingle();
+  const { data, error } = await supabase
+    .from("channels")
+    .select("*")
+    .eq("slug", slug)
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -29,16 +68,23 @@ export async function fetchChannel(slug: string): Promise<Channel | null> {
 /** Cursor = ISO published_at of the last item already shown. */
 export async function fetchPosts(opts: {
   cursor?: string | null;
-  channelIds?: string[];
+  channelIds?: string[] | undefined;
   limit?: number;
 }): Promise<Post[]> {
   let q = supabase
     .from("posts")
     .select(POST_SELECT)
     .eq("status", "published")
+    .eq("channel.status", "active")
     .order("published_at", { ascending: false })
+    .order("id", { ascending: false })
     .limit(opts.limit ?? PAGE_SIZE);
-  if (opts.cursor) q = q.lt("published_at", opts.cursor);
+  if (opts.cursor) {
+    const [publishedAt, id] = opts.cursor.split("|");
+    q = id
+      ? q.or(`published_at.lt.${publishedAt},and(published_at.eq.${publishedAt},id.lt.${id})`)
+      : q.lt("published_at", publishedAt!);
+  }
   if (opts.channelIds) {
     if (opts.channelIds.length === 0) return [];
     q = q.in("channel_id", opts.channelIds);
@@ -48,26 +94,21 @@ export async function fetchPosts(opts: {
   return data as unknown as Post[];
 }
 
-/**
- * "Para você": explicable score — posts from interests/followed channels get +2,
- * featured +1, urgent +1, minus 1 point per 12h of age. No AI.
- */
-export function scoreForYou(post: Post, preferred: Set<string>, now = Date.now()): number {
-  const ageH = (now - new Date(post.published_at).getTime()) / 3_600_000;
-  let s = -ageH / 12;
-  if (preferred.has(post.channel_id)) s += 2;
-  if (post.is_featured) s += 1;
-  if (post.is_urgent) s += 1;
-  return s;
-}
-
 export async function fetchPost(slug: string): Promise<Post | null> {
-  const { data, error } = await supabase.from("posts").select(POST_SELECT).eq("slug", slug).maybeSingle();
+  const { data, error } = await supabase
+    .from("posts")
+    .select(POST_SELECT)
+    .eq("slug", slug)
+    .maybeSingle();
   if (error) throw error;
   return data as unknown as Post | null;
 }
 
-export async function searchPosts(term: string, channelId?: string, sinceDays?: number): Promise<Post[]> {
+export async function searchPosts(
+  term: string,
+  channelId?: string,
+  sinceDays?: number,
+): Promise<Post[]> {
   let q = supabase
     .from("posts")
     .select(POST_SELECT)
@@ -77,7 +118,8 @@ export async function searchPosts(term: string, channelId?: string, sinceDays?: 
   const t = term.trim().replace(/[%,()]/g, " ");
   if (t) q = q.or(`title.ilike.%${t}%,summary.ilike.%${t}%,tags.cs.{${t.toLowerCase()}}`);
   if (channelId) q = q.eq("channel_id", channelId);
-  if (sinceDays) q = q.gte("published_at", new Date(Date.now() - sinceDays * 86_400_000).toISOString());
+  if (sinceDays)
+    q = q.gte("published_at", new Date(Date.now() - sinceDays * 86_400_000).toISOString());
   const { data, error } = await q;
   if (error) throw error;
   return data as unknown as Post[];

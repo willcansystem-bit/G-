@@ -1,20 +1,33 @@
 import { Link } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
-import { timeAgo, type Post } from "@/lib/api";
+import { timeAgo, type PostCard } from "@/lib/api";
 import { postImage } from "@/lib/images";
 import { ChannelAvatar, DemoBadge, Verified } from "./Brand";
 import { PostActions } from "./PostActions";
+import { FollowButton } from "./FollowButton";
 
-export function PostItem({ post }: { post: Post }) {
+export function PostItem({
+  post,
+  showFollow,
+}: {
+  post: PostCard;
+  showFollow?: boolean | undefined;
+}) {
   const img = postImage(post.image_key);
   return (
     <article className="relative border-b border-border px-4 py-3 transition-colors hover:bg-secondary/40">
       <div className="flex gap-3">
-        <Link to="/canal/$slug" params={{ slug: post.channel?.slug ?? "" }} className="relative z-10 h-fit">
+        <Link
+          to="/canal/$slug"
+          params={{ slug: post.channel?.slug ?? "" }}
+          className="relative z-10 h-fit"
+        >
           <ChannelAvatar channel={post.channel} />
         </Link>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm">
+          <div
+            className={`relative flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm ${showFollow ? "min-h-8 pr-24" : ""}`}
+          >
             <Link
               to="/canal/$slug"
               params={{ slug: post.channel?.slug ?? "" }}
@@ -23,6 +36,11 @@ export function PostItem({ post }: { post: Post }) {
               {post.channel?.name}
             </Link>
             <Verified />
+            {showFollow && (
+              <span className="absolute right-0 top-0 z-10">
+                <FollowButton channelId={post.channel_id} small onlyUnfollowed />
+              </span>
+            )}
             <span className="text-muted-foreground">·</span>
             <time dateTime={post.published_at} className="text-muted-foreground">
               {timeAgo(post.published_at)}
@@ -60,9 +78,9 @@ export function PostItem({ post }: { post: Post }) {
                 </span>
               )}
               {post.tags.map((t) => (
-                <Link key={t} to="/explorar" search={{ q: t }} className="text-primary hover:underline">
+                <span key={t} className="text-primary">
                   #{t}
-                </Link>
+                </span>
               ))}
             </div>
           )}

@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Bookmark, Heart, Link2, MessageCircle, MoreHorizontal, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { compact, type Post } from "@/lib/api";
+import { compact, type PostCard } from "@/lib/api";
 import { useMyState } from "@/hooks/useAuth";
 import { useRequireAuth, useToggleLike, useToggleSave } from "@/hooks/useInteractions";
 import {
@@ -22,7 +22,7 @@ async function copyLink(slug: string) {
   toast.success("Link copiado");
 }
 
-export function PostActions({ post }: { post: Post }) {
+export function PostActions({ post }: { post: PostCard }) {
   const { data: me } = useMyState();
   const requireAuth = useRequireAuth();
   const like = useToggleLike();
@@ -31,10 +31,12 @@ export function PostActions({ post }: { post: Post }) {
   const saved = me?.saves.has(post.id) ?? false;
   const [baseLiked] = useState(liked);
   const [pop, setPop] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   // count from server, adjusted for changes made in this session
   const likes = post.likes_count + (liked ? 1 : 0) - (me && baseLiked ? 1 : 0);
 
   const share = async () => {
+    if (!requireAuth()) return;
     const url = postUrl(post.slug);
     if (navigator.share) {
       try {
@@ -43,11 +45,16 @@ export function PostActions({ post }: { post: Post }) {
         /* cancelado */
       }
     } else {
-      window.open(`https://wa.me/?text=${encodeURIComponent(`${post.title} ${url}`)}`, "_blank", "noopener");
+      window.open(
+        `https://wa.me/?text=${encodeURIComponent(`${post.title} ${url}`)}`,
+        "_blank",
+        "noopener",
+      );
     }
   };
 
-  const btn = "group inline-flex items-center gap-1.5 rounded-full p-2 text-sm text-muted-foreground transition-colors";
+  const btn =
+    "group inline-flex items-center gap-1.5 rounded-full p-2 text-sm text-muted-foreground transition-colors";
 
   return (
     <div className="-ml-2 mt-2 flex items-center justify-between pr-1">
@@ -88,21 +95,41 @@ export function PostActions({ post }: { post: Post }) {
       >
         <Bookmark className={cn("h-[18px] w-[18px]", saved && "fill-primary")} />
       </button>
-      <button type="button" aria-label="Compartilhar" onClick={share} className={cn(btn, "hover:bg-primary/10 hover:text-primary")}>
+      <button
+        type="button"
+        aria-label="Compartilhar"
+        onClick={share}
+        className={cn(btn, "hover:bg-primary/10 hover:text-primary")}
+      >
         <Share2 className="h-[18px] w-[18px]" />
       </button>
-      <DropdownMenu>
+      <DropdownMenu
+        open={menuOpen}
+        onOpenChange={(next) => {
+          if (!next || requireAuth()) setMenuOpen(next);
+        }}
+      >
         <DropdownMenuTrigger className={cn(btn, "hover:bg-secondary")} aria-label="Mais opções">
           <MoreHorizontal className="h-[18px] w-[18px]" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="glass border">
-          <DropdownMenuItem onClick={() => copyLink(post.slug)}>
+          <DropdownMenuItem
+            onClick={() => {
+              if (requireAuth())
+                copyLink(post.slug).catch(() => toast.error("Não foi possível copiar o link."));
+            }}
+          >
             <Link2 className="mr-2 h-4 w-4" /> Copiar link
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
-              window.open(`https://wa.me/?text=${encodeURIComponent(`${post.title} ${postUrl(post.slug)}`)}`, "_blank", "noopener")
-            }
+            onClick={() => {
+              if (requireAuth())
+                window.open(
+                  `https://wa.me/?text=${encodeURIComponent(`${post.title} ${postUrl(post.slug)}`)}`,
+                  "_blank",
+                  "noopener",
+                );
+            }}
           >
             <Share2 className="mr-2 h-4 w-4" /> Enviar no WhatsApp
           </DropdownMenuItem>
